@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<style type="text/css">
+    table{
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+    }
+    table, th, td{
+        border: 1px solid #cdcdcd;
+    }
+    table th, table td{
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+<script>
+  $(document).ready(function() {
+    var userA = {};
+    var userB = {
+      "Home-Alone": 5,
+      "Spiderman": 4,
+      "Batman-Begins": 5,
+      "Shrek": 3,
+      "BatmanVSSuperman": 1.5,
+      "Pursuit-Of-Happiness": 5,
+      "Get-Out": 5,
+      "Godfather": 5,
+      "Up": 3,
+      "Toy-Story": 2.5,
+      "Despicable-Me": 3.5,
+      "Dumb-and-Dumber": 1.5,
+      "Wolf-Of-Wall-Street": 4,
+      "Get-Hard": 2,
+      "Spring-Breakers" : 2.5,
+      "Inception" : 4,
+      "V-For-Vendetta" : 2,
+      "More-Than-A-Game" : 3.5,
+      "Like-Mike" : 4,
+      "ATL" : 3
+
+    };
+
+    var userC = {
+      "Home-Alone": 5,
+      "Spiderman": 2,
+      "Batman-Begins": 1,
+      "Shrek": 4,
+      "BatmanVSSuperman": 3,
+      "Pursuit-Of-Happiness": 4,
+      "Get-Out": 4,
+      "Godfather": 3,
+      "Up": 2,
+      "Toy-Story": 3.5,
+      "Despicable-Me": 2,
+      "Dumb-and-Dumber": 2.5,
+      "Wolf-Of-Wall-Street": 3,
+      "Get-Hard": 3,
+      "Spring-Breakers" : 1.5,
+      "Inception" : 4,
+      "V-For-Vendetta" : 3.5,
+      "More-Than-A-Game" : 1,
+      "Like-Mike" : 2,
+      "ATL" : 3.5
+    };
+    var newUserAList = {};
+    var newUserBList = {};
+    var newUserCList = {};
+    var userA1partOfDen = 0;
+    var userB1partOfDen = 0;
+    var userC1partOfDen = 0;
+    var userA2partOfDen = 0;
+    var userB2partOfDen = 0;
+    var userC2partOfDen = 0;
+    var newUserAavg = 0;
+    var newUserBavg = 0;
+    var newUserCavg = 0;
+    var newUserAScore = 0;
+    var newUserBScore = 0;
+    var newUserCScore = 0;
+    var numeratorsimAB = 0;
+    var numeratorsimAC = 0;
+    var numeratorsimBC = 0;
+    var denominatorsimBC = 0;
+    var denominatorsimAB = 0;
+    var denominatorsimAC = 0;
+    var simAB = 0;
+    var simAC = 0;
+    var simBC = 0;
+    var count = 0;
+
+    $(".addInfo").click(function() {
+      var movieName = $("#movieName").val();
+      var rating = Number($("#rating").val());
+      var addition = "<tr><td>" + "UserA" + "</td><td>" + movieName + "</td><td>" + rating + "</td></tr>";
+      $("table tbody").append(addition);
+      userA[movieName] = rating;
+    });
+
+
+    $(".stop").click(function() {
+        $.each(userA, function(key, value) {
+      alert("User A has a key of " + key + " and value of " + value+ ".");
+    });
+    alert("Press calculate afterwards to get recommedations.");
+  });
+
+    $(".calculateSIM").click(function() {
+      $.each(userA, function(key){
+        newUserAScore += userA[key];
+        newUserBScore += userB[key];
+        newUserCScore += userC[key];
+        newUserBList[key] = userB[key];
+        newUserCList[key] = userC[key];
+        count++;
+        newUserAavg = newUserAScore/count;
+        newUserBavg = newUserBScore/count;
+        newUserCavg = newUserCScore/count;
+      });
+
+      Object.keys(userA).forEach(function(key) {
+        numeratorsimAB += ((userA[key] - newUserAavg) * (newUserBList[key] - newUserBavg));
+      });
+
+      Object.keys(userA).forEach(function(key) {
+        numeratorsimAC += ((userA[key] - newUserAavg) * (newUserCList[key] - newUserCavg));
+      });
+
+      Object.keys(userA).forEach(function(key) {
+        numeratorsimBC += ((newUserBList[key] - newUserBavg) * (newUserCList[key] - newUserCavg));
+      });
+
+      Object.keys(userA).forEach(function(key) {
+        userA1partOfDen += Math.pow((userA[key] - newUserAavg), 2);
+        userA2partOfDen = Math.sqrt(userA1partOfDen);
+      });
+
+      Object.keys(newUserBList).forEach(function(key) {
+        userB1partOfDen += Math.pow((newUserBList[key] - newUserBavg), 2);
+        userB2partOfDen = Math.sqrt(userB1partOfDen);
+      });
+
+      Object.keys(newUserCList).forEach(function(key) {
+        userC1partOfDen += Math.pow((newUserCList[key] - newUserCavg), 2);
+        userC2partOfDen = Math.sqrt(userC1partOfDen);
+      });
+
+
+      denominatorsimAB = userA2partOfDen * userB2partOfDen;
+      denominatorsimAC = userA2partOfDen * userC2partOfDen;
+      denominatorsimBC = userB2partOfDen * userC2partOfDen;
+      simAC = numeratorsimAC / denominatorsimAC;
+      simAB = numeratorsimAB / denominatorsimAB;
+      /*alert("The cosine simlarity based on what's coded is " + simAB + ".");*/
+      /*alert("The cosine simlarity based on what's coded is " + simAC + "."); */
+
+      $.each(userB, function(key) {
+          if(userA[key] == null) {
+            if(simAB > 0 && simAC > 0){
+            newUserAList[key] = (1/(simAB + simAC)) * ((simAB * userB[key]) + (simAC + userC[key]));
+            /*alert("The projected rating for " + key + " from user A based on sim score is: " + newUserAList[key] + ".")*/
+         }else if(simAB < 0 && simAC > 0){
+           newUserAlist[key] = (1/simAC) * (simAC * userC[key]);
+            /*alert("The projected rating for " + key + " from user A based on sim score is: " + newUserAList[key] + ".")*/
+         }else if (simAB > 0 && simAC < 0){
+           newUserAList[key] = (1/simAB) * (simAB * userB[key]);
+             /*alert("The projected rating for " + key + " from user A based on sim score is: " + newUserAList[key] + ".")*/
+        }else {
+          alert("Both cosine simlarities are negative");
+        }
+        }
+      });
+
+      $.each(newUserAList, function(key){
+           if(newUserAList[key] >= 4){
+             alert("Based on your ratings of other movies you might like: " + key);
+           }
+      });
+
+
+    });
+  });
+
+</script>
+</head>
+<body style ="background-color:dodgerblue;">
+<body>
+      <b><h2 style= "font-family:courier;"> Welcome to the Movie Recommender System </b></h2><br>
+      <p> On this website we will ask the users to rate some movies. Based on the ratings we recieve we will provide them some recommendations.</p>
+      <form>
+        <pairlist>
+        <b><p> Please enter the name of the movie you would like to rate:<pair><key> <input type="text" id="movieName" placeholder="Movie Name"></key></p></b> <br>
+        <b><p> Please enter rating of this movie (0.5 to 5):<value><input type="text" id="rating" placeholder="Rating"></value></pair></p></b> <br>
+      </pairlist>
+        <input type="button" class="addInfo" value="Submit"> <br>
+        <input type="button" class="stop" value="Halt">
+        <input type="button" class="calculateSIM" value="Calculate">
+        <p id="demo1"></p>
+        <p id="demo2"></p>
+      </form><br>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Movie Matrix </th>
+          <th> Movie Name</th>
+          <th> Rating </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+
+        </tr>
+      </tbody>
+    </table>
+
+</body>
+</html>
